@@ -19,7 +19,7 @@ public class MotAleatoire {
         try (BufferedReader br = Files.newBufferedReader(fichier)) {
             String line = br.readLine();
             while (line != null){
-                String[] bouts = line.split(" ",1);
+                String[] bouts = line.split(" ",2);
                  map.put(bouts[0], bouts[1]);
             line = br.readLine();
         }
@@ -31,6 +31,21 @@ public class MotAleatoire {
     public Map.Entry<String, String> getMot(){
         List<Map.Entry<String, String>> liste = new ArrayList<>(map.entrySet());
         return liste.get(random.nextInt(liste.size()));
+    }
+
+    public static void main(String[] args) {
+        // Spécifiez le chemin vers votre fichier
+        String cheminFichier = "mots.txt";
+
+        // Crée une instance de MotAleatoire en passant le chemin du fichier
+        MotAleatoire motAleatoire = new MotAleatoire(cheminFichier);
+
+        // Obtient un mot aléatoire en appelant la méthode getMot()
+        Map.Entry<String, String> motAleatoireEntry = motAleatoire.getMot();
+
+        // Affiche le mot et sa définition (ou ce que vous voulez afficher)
+        System.out.println("Mot: " + motAleatoireEntry.getKey());
+        System.out.println("Définition: " + motAleatoireEntry.getValue());
     }
 
 }
