@@ -31,6 +31,12 @@ public class PenduModel {
         motAdeviner = motAleatoireEntry.getKey();
         return motAleatoireEntry;
     }
+
+    /**
+     *
+     * @param cheminFichier
+     * @return mot aléatoire qui appartient au fichier de la racine
+     */
     private static Map.Entry<String, String> obtenirMotAleatoire(String cheminFichier) {
         Random random = new Random();
         TreeMap<String, String> map = new TreeMap<>();
@@ -70,6 +76,11 @@ public class PenduModel {
         return mot.charAt(random.nextInt(mot.length()));
     }
 
+    /**
+     *
+     * @param lettreProposee
+     * @return si la lettre qu'on a propose appartient ou pas au mot à deviner
+     */
     public boolean verificationLettre(char lettreProposee) {
         boolean verif = false;
         for (int i = 0; i < motAdeviner.length(); i++) {
@@ -81,6 +92,11 @@ public class PenduModel {
         return verif;
     }
 
+    /**
+     *
+     * @param lettreProposee
+     * @return le nombre de tentatives qu'il reste au joueur
+     */
     public int miseJourTentativesRestantes (char lettreProposee){
         if (!verificationLettre(lettreProposee)){
             tentativesRestantes--;
@@ -88,6 +104,12 @@ public class PenduModel {
         return tentativesRestantes;
     }
 
+    /**
+     *
+     * @param lettresProposees
+     * @param tentativesRestantes
+     * @return si le joueur a gagné ou perdu sa partie
+     */
     public boolean statutJeu(Set<Character> lettresProposees, int tentativesRestantes) {
         boolean victoire = false;
 
