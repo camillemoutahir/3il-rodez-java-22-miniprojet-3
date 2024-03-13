@@ -9,8 +9,9 @@ import java.util.*;
 public class PenduModel {
     private Random random = new Random();
     private TreeMap<String, String> map;
+    private char lettreProposee;
     private Set<Character> lettresProposees;
-    private int tentativesRestantes;
+    private int tentativesRestantes = 7;
     public void MotAleatoire(String fichier) {
         map = new TreeMap<String, String>();
         lireFichier(Paths.get(fichier));
@@ -42,6 +43,36 @@ public class PenduModel {
     public char lettreProposer(String mot){
         return mot.charAt(random.nextInt(mot.length()));
     }
+
+    public boolean verificationLettre (String mot, char lettreProposee){
+        boolean verif = false;
+        int occurence = 0;
+
+        for (int i=0; i<=mot.length(); i++){
+            if(mot.toUpperCase().contains(String.valueOf(lettreProposee))
+        ){
+                verif = true;
+                occurence ++;
+            }
+        }
+        return verif;
+    }
+    public int miseJourTentativesRestantes (String mot, char lettreProposee){
+        if (!verificationLettre(mot, lettreProposee)){
+            tentativesRestantes--;
+        }
+        return tentativesRestantes;
+    }
+    public boolean statutJeu (int tentativesRestantes){
+        boolean victoire = true;
+        if (tentativesRestantes == 8){
+            victoire = false;
+            System.out.println("GameOver");
+        }
+        return victoire;
+    }
+
+
 
 
     // Implémentez les méthodes nécessaires pour le jeu, par exemple : 
