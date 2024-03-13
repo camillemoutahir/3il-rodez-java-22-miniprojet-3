@@ -1,6 +1,7 @@
 public class MainPendu {
     public static void main(String[] args) {
-        PenduModel model = new PenduModel();
+        String cheminFichier = "mots.txt";
+        PenduModel model = new PenduModel(cheminFichier);
         PenduVue view = new PenduVue();
         PenduControleur controller = new PenduControleur(model, view);
 

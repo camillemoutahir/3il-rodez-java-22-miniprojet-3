@@ -2,16 +2,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Path;
+import java.util.Map;
 
 public class PenduVue extends JFrame {
     private JButton commencerPartieButton;
-    private JButton proposerlettre;
+    private JTextField lettreProposeeTextField;
+    private JButton proposerLettreButton;
     private JLabel motLabel;
     private JLabel imagePenduLabel;
-    private JLabel tentativesLabel;
+    private JLabel tentativesRestantesLabel;
+    private PenduModel model;
 
     public PenduVue() {
-        // Initialisation de la fenêtre Swing, des composants, etc.
+        String cheminFichier = "mots.txt";
+        model = new PenduModel(cheminFichier);
         initialiserInterface();
     }
 
@@ -21,41 +26,78 @@ public class PenduVue extends JFrame {
         setSize(400, 400);
         setLayout(new BorderLayout());
 
-        // Image du pendu
         imagePenduLabel = new JLabel();
-        imagePenduLabel.setHorizontalAlignment(JLabel.CENTER);
         add(imagePenduLabel, BorderLayout.CENTER);
-
-        // Tentatives restantes
-        tentativesLabel = new JLabel("Tentatives restantes : ");
-        tentativesLabel.setHorizontalAlignment(JLabel.CENTER);
-        add(tentativesLabel, BorderLayout.NORTH);
 
         // Bouton pour commencer la partie
         commencerPartieButton = new JButton("Commencer la partie");
         commencerPartieButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Réagir au clic sur le bouton (commencer la partie)
-                // Vous pouvez déclencher ici l'initialisation d'une nouvelle partie
+                commencerPartie();
             }
         });
-        add(commencerPartieButton, BorderLayout.SOUTH);
+        add(commencerPartieButton, BorderLayout.NORTH);
+        lettreProposeeTextField = new JTextField();
+        add(lettreProposeeTextField, BorderLayout.CENTER);
 
-        // Rafraîchir l'interface (ajuster l'image du pendu, les tentatives, etc.) ici
-        // ...
+        proposerLettreButton = new JButton("Proposer une lettre");
+        proposerLettreButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                proposerLettre();
+            }
+        });
+        add(proposerLettreButton, BorderLayout.SOUTH);
 
-        // Assurez-vous d'avoir les images du pendu dans le bon chemin
-        // Remplacez "chemin/vers/bonhomme0.png" par le chemin réel de vos images
-        imagePenduLabel.setIcon(new ImageIcon("chemin/vers/bonhomme0.png"));
-
+        tentativesRestantesLabel = new JLabel("Tentatives restantes : ");
+        add(tentativesRestantesLabel, BorderLayout.EAST);
     }
 
-    public Button getProposerButton() {
-        return null;
+    private void commencerPartie() {
+        String cheminFichier = "mots.txt";
+        model.initialiserMotAdeviner(cheminFichier);
+
+        lettreProposeeTextField.setEnabled(true);
+        proposerLettreButton.setEnabled(true);
+        tentativesRestantesLabel.setText("Tentatives restantes : " + model.getTentativesRestantes());
+
+        String mot = model.getMotAdeviner();
+        System.out.println("Mot choisi : " + mot);
+        afficherImagePendu(model.getTentativesRestantes());
     }
 
-    // Ajoutez des méthodes pour mettre à jour l'interface en fonction des changements dans le modèle
+    private void proposerLettre() {
+        String lettreProposeeText = lettreProposeeTextField.getText();
+        if (lettreProposeeText.length() > 0) {
+            char lettre = lettreProposeeText.charAt(0);
+            if (model.verificationLettre(lettre)) {
+                System.out.println("Lettre correcte : " + lettre);
+            } else {
+                System.out.println("Lettre incorrecte : " + lettre);
+                model.miseJourTentativesRestantes(lettre);
+                int tentativesRestantes = model.getTentativesRestantes();
+                tentativesRestantesLabel.setText("Tentatives restantes : " + tentativesRestantes);
+
+                // Mettre à jour le statut du jeu
+                if (!model.statutJeu(model.getLettresProposees(), tentativesRestantes)) {
+                    System.out.println("Game Over");
+                    ImageIcon gameover = new ImageIcon("gameover.png");
+                    imagePenduLabel.setIcon(gameover);
+                } else if (model.statutJeu(model.getLettresProposees(), tentativesRestantes)) {
+                    System.out.println("Vous avez gagné !");
+                    ImageIcon victoire = new ImageIcon("victoire.png");
+                    imagePenduLabel.setIcon(victoire);
+                }
+            }
+        }
+    }
+    private void afficherImagePendu(int tentativesRestantes) {
+        // Charger l'image correspondante
+        ImageIcon image = new ImageIcon("pendu" +  tentativesRestantes + ".png");
+        imagePenduLabel.setIcon(image);
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -65,4 +107,3 @@ public class PenduVue extends JFrame {
         });
     }
 }
-
